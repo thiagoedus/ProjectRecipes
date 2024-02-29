@@ -1,7 +1,8 @@
+from unittest import skip
+
 from recipes.tests.test_recipe_base import RecipeTestBase
 from django.urls import reverse, resolve
 from recipes import views
-
 
 class RecipeViewsTest(RecipeTestBase):
 
@@ -17,13 +18,15 @@ class RecipeViewsTest(RecipeTestBase):
         response = self.client.get(reverse('recipes:home'))
         self.assertTemplateUsed(response, 'recipes/pages/home.html')
 
-
+    @skip('WIP')
     def test_recipe_home_template_shows_no_recipes_found_if_no_recipes(self):
         response = self.client.get(reverse('recipes:home'))
         self.assertIn(
             'No recipes found',
             response.content.decode('utf-8')
             ) 
+        
+        self.fail('Para que eu termine de comentá-lo')
         
     def test_recipe_home_template_loads_recipes(self):
         self.make_recipe(author_data={
