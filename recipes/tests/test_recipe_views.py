@@ -18,16 +18,13 @@ class RecipeViewsTest(RecipeTestBase):
         response = self.client.get(reverse('recipes:home'))
         self.assertTemplateUsed(response, 'recipes/pages/home.html')
 
-    @skip('WIP')
     def test_recipe_home_template_shows_no_recipes_found_if_no_recipes(self):
         response = self.client.get(reverse('recipes:home'))
         self.assertIn(
             'No recipes found',
             response.content.decode('utf-8')
             ) 
-        
-        self.fail('Para que eu termine de comentá-lo')
-        
+                
     def test_recipe_home_template_loads_recipes(self):
         self.make_recipe(author_data={
             'first_name': 'Thiago'
@@ -40,6 +37,16 @@ class RecipeViewsTest(RecipeTestBase):
 
         ...
 
+    def test_recipe_home_template_dont_load_recipe_not_published(self):
+        """Test recipe is published False dont show"""
+        self.make_recipe(is_published=False)
+        response = self.client.get(reverse('recipes:home'))
+        self.assertIn(
+            'No recipes found',
+            response.content.decode('utf-8')
+            )
+        ...
+
     def test_recipe_category_view_function_is_correct(self):
         view = resolve(reverse('recipes:category', kwargs={'category_id': 1000}))
         self.assertIs(view.func, views.category)
@@ -49,6 +56,13 @@ class RecipeViewsTest(RecipeTestBase):
             reverse('recipes:category', kwargs={'category_id': 1000})
         )
         self.assertEqual(response.status_code, 404)
+
+    def test_recipe_category_template_dont_load_recipes_not_published(self):
+        """Test recipe is published False dont show"""
+        recipe = self.make_recipe(is_published=False)
+        response = self.client.get(reverse('recipes:recipe', kwargs={'id': recipe.category.id}))
+        self.assertEqual(response.status_code, 404)
+        ...
 
     def test_recipe_detail_view_function_is_correct(self):
         view = resolve(reverse('recipes:recipe', kwargs={'id':1000}))
@@ -60,4 +74,9 @@ class RecipeViewsTest(RecipeTestBase):
         )
         self.assertEqual(response.status_code, 404)
 
-
+    def test_recipe_detail_template_dont_load_recipe_not_published(self):
+        """Test recipe is published False dont show"""
+        recipe = self.make_recipe(is_published=False)
+        response = self.client.get(reverse('recipes:recipe', kwargs={'id': recipe.id}))
+        self.assertEqual(response.status_code, 404)
+        ...
