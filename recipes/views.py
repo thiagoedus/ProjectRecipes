@@ -1,5 +1,5 @@
 from django.shortcuts import get_list_or_404, get_object_or_404, render, Http404
-
+from django.db.models import Q
 from recipes.models import Recipe
 
 
@@ -40,8 +40,16 @@ def search(request):
 
     if not search_therm:
         raise Http404()
-
+    
+    recipes = Recipe.objects.filter(
+        Q(
+            Q(title__icontains = search_therm) | 
+            Q(description__icontains = search_therm),
+        ),
+        is_published = True
+    ).order_by('-id')
     return render(request, 'recipes/pages/search.html', {
         'page_title': f'Search for "{ search_therm }" |',
-        'search_term': search_therm, 
+        'search_term': search_therm,
+        'recipes': recipes, 
     })
