@@ -28,7 +28,7 @@ class RecipeHomeViewsTest(RecipeTestBase):
     def test_recipe_home_template_loads_recipes(self):
         self.make_recipe(author_data={
             'first_name': 'Thiago'
-        })
+        },)
         response = self.client.get(reverse('recipes:home'))
         content = response.content.decode('utf-8')
         self.assertIn('Recipe Title', content)
