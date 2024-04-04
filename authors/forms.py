@@ -1,7 +1,47 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+
+def add_attr(field, attr_name, attr_new_val):
+    existing_attr = field.widget.attrs.get(attr_name, '')
+    field.widget.attrs[attr_name] = f'{existing_attr} {attr_new_val}'.strip()
+
+def add_placehoder(field, placeholder_new_val):
+    add_attr(field, 'placeholder', placeholder_new_val)
 
 class RegisterForm(forms.ModelForm):
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        add_placehoder(self.fields['username'], 'Your Username')
+        add_placehoder(self.fields['email'], 'Your email')
+
+    password = forms.CharField(
+        required=True,
+        widget=forms.PasswordInput(
+            attrs={
+                'placeholder': 'Repeat your password'
+            }
+        ),
+        error_messages={
+            'required': 'Password must not be empty'
+        },
+        help_text=(
+            'Passord must have at least one upppercase letter, '
+            'one lowercase letter and one number'
+        )
+    )
+
+    password2 = forms.CharField(
+        required=True,
+        widget=forms.PasswordInput(
+            attrs={
+                'placeholder': 'Repeat your password'
+            }
+        )
+    )
+
     class Meta:
         model = User
         fields = ['first_name', 
@@ -41,3 +81,27 @@ class RegisterForm(forms.ModelForm):
                 'placeholder': 'Type your password here',
             })
         }
+    
+    def clean_password(self):
+        data = self.cleaned_data.get('password')
+
+        if 'atenção' in data:
+            raise ValidationError(
+                'Não digite %(valor)s no campo password',
+                code = 'invalid',
+                params={'valor': 'atenção'}
+            )
+
+        return data
+    
+    def clean_first_name(self):
+        data = self.cleaned_data.get('first_name')
+
+        if 'Thiago' in data:
+            raise ValidationError(
+                'Não digite %(valor)s no campo first_name',
+                code = 'invalid',
+                params={'valor': 'Thiago'}
+            )
+
+        return data
