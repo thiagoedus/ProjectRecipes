@@ -126,4 +126,10 @@ class PaginationTest(RecipeTestBase):
             self.assertEqual(len(paginator.get_page(3)), 2)
 
 
-        
+    def test_make_pagination_uses_page_1_if_page_query_is_invalid(self):
+        pagination = make_pagination_range(
+            page_range=list(range(1, 21)),
+            qty_pages = 4,
+            current_page = 1,
+        )['pagination']
+        self.assertEqual([1, 2, 3, 4], pagination)
