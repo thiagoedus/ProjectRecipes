@@ -130,3 +130,4 @@ _local_settings.py
 .coverage
 media/
 htmlcov
+bin/
