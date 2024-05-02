@@ -369,6 +369,19 @@ Forms
   color: var(--color-white)
 }
 
+.inline-form {
+  display: inline;
+}
+
+.plain-text-button {
+  display: inline;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--color-primary);
+  font-size: 1.6rem;
+}
+
 @media (max-width: 600px) {
   .form-content-grid {
     display: grid;
