@@ -14,15 +14,14 @@ class RegisterForm(forms.ModelForm):
         add_placeholder(self.fields['last_name'], 'Ex.: Doe')
         add_placeholder(self.fields['password'], 'Type your password')
         add_placeholder(self.fields['password2'], 'Repeat your password')
-    
 
     username = forms.CharField(
-        label = 'Username',
+        label='Username',
         error_messages={
             'required': 'This field must not be empty',
             'min_length': 'Username must have at least 4 characters',
             'max_length': 'Username must have less than 150 characters',
-            },
+        },
         help_text=(
             'Username must have letters, numbers or one of those e @.+-_.'
             'The lenght should be between 4 and 150 characters'
@@ -70,6 +69,7 @@ class RegisterForm(forms.ModelForm):
             'required': 'Please, repeat your password',
         }
     )
+
     class Meta:
         model = User
         fields = [
@@ -100,10 +100,11 @@ class RegisterForm(forms.ModelForm):
         exists = User.objects.filter(email=email).exists()
 
         if exists:
-            raise ValidationError('User email is already in use', code='invalid',)
+            raise ValidationError(
+                'User email is already in use', code='invalid',)
 
         return email
-    
+
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get('password')
@@ -119,4 +120,3 @@ class RegisterForm(forms.ModelForm):
                     password_confirmation_error,
                 ],
             })
-        
