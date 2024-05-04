@@ -1,9 +1,10 @@
-#from unittest import TestCase
+# from unittest import TestCase
 from django.test import TestCase
 from django.test import TestCase as DjangoTestCase
 from authors.forms import RegisterForm, LoginForm
 from parameterized import parameterized
 from django.urls import reverse
+
 
 class AuthorRegisterFormUnitTest(TestCase):
     @parameterized.expand([
@@ -47,6 +48,7 @@ class AuthorRegisterFormUnitTest(TestCase):
         current = form[field].field.label
         self.assertEqual(current, needed)
 
+
 class AuthorRegisterFormIntegrationTest(DjangoTestCase):
     def setUp(self, *args, **kwargs) -> None:
         self.form_data = {
@@ -58,7 +60,7 @@ class AuthorRegisterFormIntegrationTest(DjangoTestCase):
             'password2': 'Str0ngpassword1',
         }
         return super().setUp(*args, **kwargs)
-    
+
     @parameterized.expand([
         ('username', 'This field must not be empty'),
         ('first_name', 'Write your first name'),
@@ -101,9 +103,8 @@ class AuthorRegisterFormIntegrationTest(DjangoTestCase):
         self.form_data['password'] = '@Abc123456'
         url = reverse('authors:register_create')
         response = self.client.post(url, data=self.form_data, follow=True)
-    
-        self.assertNotIn(msg, response.context['form'].errors.get('password'))
 
+        self.assertNotIn(msg, response.context['form'].errors.get('password'))
 
     def test_password_and_password_confirmation_are_equal(self):
 
@@ -115,7 +116,7 @@ class AuthorRegisterFormIntegrationTest(DjangoTestCase):
         msg = (
             'Password and password2 must be equal'
         )
-    
+
         self.assertIn(msg, response.context['form'].errors.get('password'))
         self.assertIn(msg, response.content.decode('utf-8'))
 
@@ -123,7 +124,7 @@ class AuthorRegisterFormIntegrationTest(DjangoTestCase):
         self.form_data['password2'] = '@Abc123456'
         url = reverse('authors:register_create')
         response = self.client.post(url, data=self.form_data, follow=True)
-    
+
         self.assertNotIn(msg, response.content.decode('utf-8'))
 
     def test_send_get_request_to_registration_create_view_returns_404(self):
@@ -162,3 +163,11 @@ class AuthorRegisterFormIntegrationTest(DjangoTestCase):
         )
 
         self.assertTrue(is_authenticated)
+
+    def test_login_create_not_post_is_404(self):
+
+        url = reverse('authors:login_create')
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 404)

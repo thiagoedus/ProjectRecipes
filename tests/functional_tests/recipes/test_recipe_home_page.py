@@ -41,8 +41,6 @@ class RecipeHomePageFunctionalTest(RecipeBaseFunctionalTest):
         self.assertIn(title_needed, self.browser.find_element(
             By.CLASS_NAME, 'main-content-list').text)
 
-        self.sleep(6)
-
     @patch('recipes.views.PER_PAGE', new=2)
     def test_recipe_page_home_pagination(self):
         self.make_recipe_in_batch()
@@ -62,5 +60,3 @@ class RecipeHomePageFunctionalTest(RecipeBaseFunctionalTest):
             len(self.browser.find_elements(By.CLASS_NAME, 'recipe')),
             2
         )
-
-        self.sleep(5)

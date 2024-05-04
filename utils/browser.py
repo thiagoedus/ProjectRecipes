@@ -10,6 +10,8 @@ CHROMEDRIVER_NAME = 'chromedriver.exe'
 CHROMEDRIVER_PATH = ROOT_PATH / 'bin' / CHROMEDRIVER_NAME
 
 #  --headless - O headless não mostra o navegador abrindo
+
+
 def make_chrome_browser(*options):
     chrome_options = webdriver.ChromeOptions()
     if options is not None:
@@ -21,6 +23,7 @@ def make_chrome_browser(*options):
 
     chrome_service = Service(executable_path=CHROMEDRIVER_PATH)
     return webdriver.Chrome(service=chrome_service, options=chrome_options)
+
 
 if __name__ == '__main__':
     browser = make_chrome_browser('--headless')

@@ -5,12 +5,6 @@ from selenium.webdriver.common.keys import Keys
 
 class AuthorsRegisterTest(AuthorsBaseTest):
 
-    def get_by_placeholder(self, web_element, placeholder):
-        return web_element.find_element(
-            By.XPATH,
-            f'//input[@placeholder="{placeholder}"]'
-        )
-
     def fill_form_dummy_data(self, form):
         fields = form.find_elements(By.TAG_NAME, 'input')
 
@@ -43,8 +37,6 @@ class AuthorsRegisterTest(AuthorsBaseTest):
 
             form = self.get_form()
 
-            self.sleep(5)
-
             self.assertIn('Write your first name', form.text)
         self.form_field_test_with_callback(callback)
 
@@ -57,8 +49,6 @@ class AuthorsRegisterTest(AuthorsBaseTest):
             username_field.send_keys(Keys.ENTER)
 
             form = self.get_form()
-
-            self.sleep(5)
 
             self.assertIn('This field must not be empty', form.text)
         self.form_field_test_with_callback(callback)
@@ -73,8 +63,6 @@ class AuthorsRegisterTest(AuthorsBaseTest):
             email_field.send_keys(Keys.ENTER)
 
             form = self.get_form()
-
-            self.sleep(5)
 
             self.assertIn('Informe um endereço de email válido.', form.text)
         self.form_field_test_with_callback(callback)
@@ -92,8 +80,6 @@ class AuthorsRegisterTest(AuthorsBaseTest):
             password.send_keys(Keys.ENTER)
 
             form = self.get_form()
-
-            self.sleep(5)
 
             self.assertIn('Password and password2 must be equal', form.text)
         self.form_field_test_with_callback(callback)
