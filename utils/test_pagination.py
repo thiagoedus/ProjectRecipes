@@ -98,9 +98,7 @@ class PaginationTest(RecipeTestBase):
         for item in range(15):
             recipes = self.make_recipe(author_data={'first_name': f'test_pagination_author{item}',
                                                     'username': f'test_pagination_username{item}'},
-                                       slug=f'recipe-slug-for-no-defaults{
-                                           item}',
-                                       )
+                                       slug=f'recipe-slug-for-no-defaults{item}')
             recipes.full_clean()
             recipes.save()
 
@@ -112,9 +110,7 @@ class PaginationTest(RecipeTestBase):
         for item in range(8):
             recipes = self.make_recipe(author_data={'first_name': f'test_pagination_author{item}',
                                                     'username': f'test_pagination_username{item}'},
-                                       slug=f'recipe-slug-for-no-defaults{
-                                           item}',
-                                       )
+                                       slug=f'recipe-slug-for-no-defaults{item}')
             recipes.full_clean()
             recipes.save()
 

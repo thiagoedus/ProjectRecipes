@@ -6,7 +6,7 @@ from time import sleep
 from selenium.webdriver.chrome.service import Service
 
 ROOT_PATH = Path(__file__).parent.parent
-CHROMEDRIVER_NAME = 'chromedriver.exe'
+CHROMEDRIVER_NAME = 'chromedriver'
 CHROMEDRIVER_PATH = ROOT_PATH / 'bin' / CHROMEDRIVER_NAME
 
 #  --headless - O headless não mostra o navegador abrindo
