@@ -4,14 +4,16 @@ from recipes.tests.test_recipe_base import RecipeTestBase
 from django.urls import reverse, resolve
 from recipes import views
 
+
 class RecipeHomeViewsTest(RecipeTestBase):
 
     def test_recipe_home_view_function_is_correct(self):
         view = resolve(reverse('recipes:home'))
-        self.assertIs(view.func, views.home)
+        self.assertIs(view.func.view_class, views.RecipeListViewHome)
 
     def test_recipe_home_view_return_statuscode_200_is_ok(self):
         response = self.client.get(reverse('recipes:home'))
+        print(response.status_code)
         self.assertEqual(response.status_code, 200)
 
     def test_recipe_home_view_loads_correct_template(self):
@@ -23,8 +25,8 @@ class RecipeHomeViewsTest(RecipeTestBase):
         self.assertIn(
             'No recipes found',
             response.content.decode('utf-8')
-            ) 
-                
+        )
+
     def test_recipe_home_template_loads_recipes(self):
         self.make_recipe(author_data={
             'first_name': 'Thiago'
@@ -44,5 +46,4 @@ class RecipeHomeViewsTest(RecipeTestBase):
         self.assertIn(
             'No recipes found',
             response.content.decode('utf-8')
-            )
-        
+        )

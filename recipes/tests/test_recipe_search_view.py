@@ -4,12 +4,12 @@ from recipes.tests.test_recipe_base import RecipeTestBase
 from django.urls import reverse, resolve
 from recipes import views
 
-class RecipeSearchViewsTest(RecipeTestBase):
 
+class RecipeSearchViewsTest(RecipeTestBase):
 
     def test_recipe_search_users_correct_view_function(self):
         resolved = resolve(reverse('recipes:search'))
-        self.assertIs(resolved.func, views.search)
+        self.assertIs(resolved.func.view_class, views.RecipeListViewSearch)
 
     def test_recipe_search_loads_correct_template(self):
         response = self.client.get(reverse('recipes:search') + '?q=teste')
@@ -35,13 +35,13 @@ class RecipeSearchViewsTest(RecipeTestBase):
         recipe1 = self.make_recipe(
             slug='recipe_test_one',
             title=title,
-            author_data={'username':'test_one'}
+            author_data={'username': 'test_one'}
         )
 
         recipe2 = self.make_recipe(
             slug='recipe_test_two',
             title=title2,
-            author_data={'username':'test_two'}
+            author_data={'username': 'test_two'}
         )
 
         url_search = reverse('recipes:search')
@@ -57,23 +57,22 @@ class RecipeSearchViewsTest(RecipeTestBase):
         self.assertIn(recipe1, response_both.context['recipes'])
         self.assertIn(recipe2, response_both.context['recipes'])
 
-
     def test_recipe_search_can_find_recipe_by_description(self):
         description = 'This is recipe description one'
         description2 = 'This is recipe description two'
 
         recipe1 = self.make_recipe(
             slug='recipe_test_one',
-            title = 'This is recipe one',
+            title='This is recipe one',
             description=description,
-            author_data={'username':'test_one'}
+            author_data={'username': 'test_one'}
         )
 
         recipe2 = self.make_recipe(
             slug='recipe_test_two',
-            title = 'This is recipe two',
+            title='This is recipe two',
             description=description2,
-            author_data={'username':'test_two'}
+            author_data={'username': 'test_two'}
         )
 
         url_search = reverse('recipes:search')
@@ -85,34 +84,34 @@ class RecipeSearchViewsTest(RecipeTestBase):
         self.assertIn(
             recipe1.description,
             response1.content.decode('utf-8')
-            )
-        
+        )
+
         self.assertNotIn(
             recipe2.description,
             response1.content.decode('utf-8')
-            ) 
-        
+        )
+
         self.assertIn(
             recipe2.description,
             response2.content.decode('utf-8')
-            )
-        
+        )
+
         self.assertNotIn(
             recipe1.description,
             response2.content.decode('utf-8')
-            ) 
+        )
 
         self.assertIn(
             recipe1.description,
             response_both.content.decode('utf-8')
-            ) 
-        
+        )
+
         self.assertIn(
             recipe2.description,
             response_both.content.decode('utf-8')
-            ) 
-        
+        )
+
         self.assertNotIn(
             'Not recipes found',
             response_both.content.decode('utf-8')
-            ) 
+        )
