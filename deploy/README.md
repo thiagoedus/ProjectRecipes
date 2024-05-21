@@ -89,3 +89,18 @@ cd ~
 mkdir -p ~/app_repo
 git init
 git remote add origin ~/app_bare
+
+# Configurando remote na máquina local
+
+git remote add app_bare cursodjango:~/app_bare
+git push app_bare main
+
+# No app_repo
+
+git pull origin <branch>
+Ativar ambiente virtual
+pip install -r requirementes.txt
+pip install psycopg2
+pip install gunicorn
+
+
