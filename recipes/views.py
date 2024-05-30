@@ -1,4 +1,5 @@
 from django.db.models.query import QuerySet
+from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import get_list_or_404, get_object_or_404, render, Http404
 from django.db.models import Q
 from recipes.models import Recipe, Category
@@ -7,6 +8,8 @@ import os
 from django.contrib import messages
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
+from django.http import JsonResponse
+from django.forms.models import model_to_dict
 
 
 PER_PAGE = int(os.environ.get('PER_PAGE', 6))
@@ -21,6 +24,9 @@ class RecipeListViewBase(ListView):
     def get_queryset(self, *args, **kwargs):
         qs = super().get_queryset(*args, **kwargs)
         qs = qs.filter(is_published=True)
+
+        qs = qs.select_related('author', 'category')
+
         return qs
 
     def get_context_data(self, *args, **kwargs):
@@ -34,6 +40,18 @@ class RecipeListViewBase(ListView):
 
 class RecipeListViewHome(RecipeListViewBase):
     template_name = 'recipes/pages/home.html'
+
+
+class RecipeListViewHomeApi(RecipeListViewBase):
+    template_name = 'recipes/pages/home.html'
+
+    def render_to_response(self, context, **response_args):
+
+        recipes = self.get_context_data()['recipes'].object_list.values()
+        return JsonResponse(
+            list(recipes),
+            safe=False
+        )
 
 
 class RecipeListViewCategory(RecipeListViewBase):
@@ -104,6 +122,29 @@ class RecipeDetail(DetailView):
             {'is_detail_page': True}
         )
         return context_data
+
+
+class RecipeDetailAPI(RecipeDetail):
+    def render_to_response(self, context, **response_kwargs):
+
+        recipe = self.get_context_data()['recipe']
+        recipe_dict = model_to_dict(recipe)
+
+        recipe_dict['created_at'] = str(recipe.created_at)
+        recipe_dict['updated_at'] = str(recipe.updated_at)
+
+        if recipe_dict.get('cover'):
+            recipe_dict['cover'] = self.request.build_absolute_uri() + \
+                recipe_dict['cover'].url
+        else:
+            recipe_dict['cover'] = ''
+
+        del recipe_dict['is_published']
+
+        return JsonResponse(
+            recipe_dict,
+            safe=False
+        )
 
 # def recipe(request, id):
 #     recipe = get_object_or_404(Recipe, pk=id, is_published=True,)
