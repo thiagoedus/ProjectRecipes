@@ -7,8 +7,14 @@
 </head>
 <body>
     <h1>Theory</h1>
-    <p>
-        {{ recipes.0.title }}
-    </p>
+    
+    <ul>
+        {% for recipe in recipes %}
+            <li>{{recipe.id}} {{recipe.author}} {{recipe.title}} </li>
+        {% empty %}
+            <p>No recipes found</p>
+        {% endfor %}
+    </ul>
+
 </body>
 </html>

@@ -16,15 +16,14 @@ PER_PAGE = int(os.environ.get('PER_PAGE', 6))
 
 def theory(request, *args, **kwargs):
 
-    recipes = Recipe.objects.all()
-    print(recipes[2:3])
-    print(type(recipes))
-
-    recipes = recipes.filter(title__icontains='Teste')
-
-    recipes = list(recipes)
-
-    print(type(recipes))
+    recipes = Recipe.objects.filter(
+        Q(title__icontains='bo',
+          id__gt=2,
+          is_published=True,) |
+        Q(
+            id__gt=1000
+        )
+    )[:10]
 
     context = {'recipes': recipes}
     return render(request, 'recipes/pages/theory.html', context=context)
