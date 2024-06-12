@@ -1,7 +1,8 @@
 
 from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import render, Http404
-from django.db.models import Q
+from django.db.models import Q, F, Value
+from django.db.models.functions import Concat
 from recipes.models import Recipe, Category
 from utils.pagination import make_pagination
 import os
@@ -9,6 +10,7 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
+from django.db.models.aggregates import Count
 
 
 PER_PAGE = int(os.environ.get('PER_PAGE', 6))
@@ -16,16 +18,11 @@ PER_PAGE = int(os.environ.get('PER_PAGE', 6))
 
 def theory(request, *args, **kwargs):
 
-    recipes = Recipe.objects.filter(
-        Q(title__icontains='bo',
-          id__gt=2,
-          is_published=True,) |
-        Q(
-            id__gt=1000
-        )
-    )[:10]
+    recipes = Recipe.objects.get_published()
+    number_of_recipes = Recipe.objects.aggregate(number=Count('id'))
 
-    context = {'recipes': recipes}
+
+    context = {'recipes': recipes, 'number_of_recipes': number_of_recipes['number']}
     return render(request, 'recipes/pages/theory.html', context=context)
 
 
