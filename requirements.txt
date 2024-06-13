@@ -69,6 +69,7 @@ pyRFC3339==1.1
 PySocks==1.7.1
 pytest==8.1.1
 pytest-django==4.8.0
+pytest-dotenv==0.5.2
 pytest-watch==4.2.0
 python-apt==2.4.0+ubuntu3
 python-debian==0.1.43+ubuntu1.1
