@@ -11,6 +11,7 @@ from django.views.generic.detail import DetailView
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
 from django.db.models.aggregates import Count
+from recipes.models import Tag
 
 
 PER_PAGE = int(os.environ.get('PER_PAGE', 6))
@@ -21,8 +22,8 @@ def theory(request, *args, **kwargs):
     recipes = Recipe.objects.get_published()
     number_of_recipes = Recipe.objects.aggregate(number=Count('id'))
 
-
-    context = {'recipes': recipes, 'number_of_recipes': number_of_recipes['number']}
+    context = {'recipes': recipes,
+               'number_of_recipes': number_of_recipes['number']}
     return render(request, 'recipes/pages/theory.html', context=context)
 
 
@@ -37,6 +38,7 @@ class RecipeListViewBase(ListView):
         qs = qs.filter(is_published=True)
 
         qs = qs.select_related('author', 'category')
+        qs = qs.prefetch_related('tags')
 
         return qs
 
@@ -113,6 +115,30 @@ class RecipeListViewSearch(RecipeListViewBase):
             {'page_title': f'Search for "{ search_therm }" |',
              'search_term': search_therm,
              'additional_url_query': f'&q={search_therm}'}
+        )
+        return context_data
+
+
+class RecipeListViewTag(RecipeListViewBase):
+    template_name = 'recipes/pages/tag.html'
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        qs = qs.filter(tags__slug=self.kwargs.get('slug', ''))
+        return qs
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        page_title = Tag.objects.filter(
+            slug=self.kwargs.get('slug', '')).first()
+
+        if not page_title:
+            page_title = 'No recipes found'
+
+        page_title = f'{page_title} - Tag |'
+
+        context_data.update(
+            {'page_title': page_title}
         )
         return context_data
 
