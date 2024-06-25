@@ -1,8 +1,7 @@
 
 from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import render, Http404
-from django.db.models import Q, F, Value
-from django.db.models.functions import Concat
+from django.db.models import Q
 from recipes.models import Recipe, Category
 from utils.pagination import make_pagination
 import os
@@ -12,6 +11,8 @@ from django.http import JsonResponse
 from django.forms.models import model_to_dict
 from django.db.models.aggregates import Count
 from recipes.models import Tag
+from django.utils import translation
+from django.utils.translation import gettext as _
 
 
 PER_PAGE = int(os.environ.get('PER_PAGE', 6))
@@ -46,8 +47,15 @@ class RecipeListViewBase(ListView):
         context_data = super().get_context_data(*args, **kwargs)
         page_obj, pagination_range = make_pagination(
             self.request, context_data.get('recipes'), PER_PAGE)
+        
+        html_language = translation.get_language()
+
         context_data.update(
-            {'recipes': page_obj, 'pagination_range': pagination_range})
+            {
+                'recipes': page_obj, 
+                'pagination_range': pagination_range, 
+                'html_language': html_language
+            })
         return context_data
 
 
@@ -79,8 +87,11 @@ class RecipeListViewCategory(RecipeListViewBase):
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
+
+        category_translation = _('Category')
+
         first_recipe = context_data.get('recipes')[0]
-        context_data['title'] = f'{first_recipe.category.name} - Category | '
+        context_data['title'] = f'{first_recipe.category.name} - {category_translation} | '
         return context_data
 
 
